@@ -5,8 +5,8 @@ import bs4
 import requests
 
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger('parser')
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('pars')
 
 
 ParseResult = collections.namedtuple(
@@ -42,9 +42,6 @@ class Client:
             self.parse_block(block=block)
 
     def parse_block(self, block):
-        # logger.info(block)
-        # logger.info('=', * 100)
-
         url_block = block.select_one('a.ref_goods_n_p.j-open-full-product-card')
         if not url_block:
             logger.error('no url_block')
@@ -76,12 +73,20 @@ class Client:
 
         goods_name = goods_name.text.strip()
 
-        logger.info('%s, %s, %s', url, brand_name, goods_name)
+        self.result.append(ParseResult(
+            url=url,
+            brand_name=brand_name,
+            goods_name=goods_name,
+        ))
 
+        logger.debug('%s, %s, %s', url, brand_name, goods_name)
+        logger.debug('-' * 100)
 
     def run(self):
         text = self.load_page()
         self.parse_page(text=text)
+        logger.info(f'Получили {len(self.result)} элементов')
+
 
 if __name__ == '__main__':
     parser = Client()
@@ -89,14 +94,3 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-
-# URL = 'https://auto.ria.com/newauto/marka-jeep'
-# HEADERS = {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0', 'accept': '*/*'}
-# HOST = 'https://auto.ria.com'
-# FILE = 'cars.csv'
-
-# 'User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'
