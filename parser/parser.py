@@ -93,12 +93,13 @@ class Client:
         with open(path, 'w') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
             writer.writerow(HEADERS)
+            for item in self.result:
+                writer.writerow(item)
 
     def run(self):
-        # text = self.load_page()
-        # self.parse_page(text=text)
-        # logger.info(f'Получили {len(self.result)} элементов')
-
+        text = self.load_page()
+        self.parse_page(text=text)
+        logger.info(f'Получили {len(self.result)} элементов')
         self.save_result()
 
 if __name__ == '__main__':
