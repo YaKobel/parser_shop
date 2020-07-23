@@ -69,9 +69,14 @@ class Client:
         brand_name = brand_name.text
         brand_name = brand_name.replace('/', '').strip()
 
-        brand_name = name_block.select_one('strong.brand-name')
+        goods_name = name_block.select_one('span.goods-name.c-text-sm')
+        if not goods_name:
+            logger.error(f'no goods_name on {url}')
+            return
 
-        logger.info('%s, %s', url, brand_name)
+        goods_name = goods_name.text.strip()
+
+        logger.info('%s, %s, %s', url, brand_name, goods_name)
 
 
     def run(self):
