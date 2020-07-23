@@ -1,5 +1,6 @@
 import logging
 import collections
+import csv
 
 import bs4
 import requests
@@ -18,6 +19,11 @@ ParseResult = collections.namedtuple(
     ),
 )
 
+HEADERS = (
+    'Бренд',
+    'Товар',
+    'Ссылка',
+)
 
 class Client:
 
@@ -82,11 +88,18 @@ class Client:
         logger.debug('%s, %s, %s', url, brand_name, goods_name)
         logger.debug('-' * 100)
 
-    def run(self):
-        text = self.load_page()
-        self.parse_page(text=text)
-        logger.info(f'Получили {len(self.result)} элементов')
+    def save_result(self):
+        path = 'C:\python\Parsers\parser_shop\parser\htest.csv'
+        with open(path, 'w') as f:
+            writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(HEADERS)
 
+    def run(self):
+        # text = self.load_page()
+        # self.parse_page(text=text)
+        # logger.info(f'Получили {len(self.result)} элементов')
+
+        self.save_result()
 
 if __name__ == '__main__':
     parser = Client()
