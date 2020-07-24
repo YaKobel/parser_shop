@@ -16,6 +16,7 @@ ParseResult = collections.namedtuple(
         'brand_name',
         'goods_name',
         'url',
+        'price_name',
     ),
 )
 
@@ -23,6 +24,7 @@ HEADERS = (
     'Бренд',
     'Товар',
     'Ссылка',
+    'Цена',
 )
 
 class Client:
@@ -79,17 +81,30 @@ class Client:
 
         goods_name = goods_name.text.strip()
 
+        price_block = block.select_one('span.price')
+        if not price_block:
+            logger.error(f'no price on {url}')
+            return
+
+        price_name = price_block.select_one('ins.lower-price')
+        if not price_name:
+            logger.error(f'no price_name on {url}')
+            return
+
+        price_name = price_name.text.strip()
+
         self.result.append(ParseResult(
             url=url,
             brand_name=brand_name,
             goods_name=goods_name,
+            price_name=price_name,
         ))
 
-        logger.debug('%s, %s, %s', url, brand_name, goods_name)
+        logger.debug('%s, %s, %s, %s', url, brand_name, goods_name, price_name)
         logger.debug('-' * 100)
 
     def save_result(self):
-        path = 'C:\python\Parsers\parser_shop\parser\htest.csv'
+        path = 'C:\python\Parsers\parser_shop\parser\yhtest.csv'
         with open(path, 'w') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
             writer.writerow(HEADERS)
