@@ -17,8 +17,20 @@ def get_content(html):
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('div', class_='product-item')
     cards = []
-    print(items)
+
+    for item in items:
+        cards.append(
+            {
+                'title':item.find('div', class_='title').get_text(),
+                'link_product': item.find('div', class_='title').find('a').get('href'),
+                'brand': item.find('div', class_='brand').get_text(),
+                'card_img': item.find('div', class_='image').find('img').get('src'),
+
+            }
+        )
+    return cards
+
 
 
 html = get_html(URL)
-get_content(html.text)
+print(get_content(html.text))
