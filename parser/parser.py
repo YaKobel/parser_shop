@@ -14,19 +14,20 @@ ParseResult = collections.namedtuple(
     'ParseResult',
     (
         'brand_name',
-        'goods_name',
         'url',
-        'thumbnail'
-        # 'price_name',
+        'lover_name',
+        'goods_name',
+        'thumbnail',
     ),
 )
 
 HEADERS = (
     'Бренд',
+    'Цена',
     'Товар',
     'Ссылка',
     'Фото',
-    # 'Цена',
+
 )
 
 class Client:
@@ -76,6 +77,24 @@ class Client:
         brand_name = brand_name.text
         brand_name = brand_name.replace('/', '').strip()
 
+        price_block = block.select_one('div.j-cataloger-price')
+        if not price_block:
+            logger.error(f'no price on {url}')
+            return
+
+        price_name = price_block.select_one('span.price')
+        if not price_name:
+            logger.error(f'no price_name on {url}')
+            return
+
+        lover_name = price_name.select_one('ins.lower-price')
+        if not lover_name:
+            logger.error(f'no lover_name on {url}')
+            return
+
+        # lover_name = lover_name.text
+        # lover_name = lover_name.replace('/', '').strip()
+
         goods_name = name_block.select_one('span.goods-name.c-text-sm')
         if not goods_name:
             logger.error(f'no goods_name on {url}')
@@ -89,31 +108,21 @@ class Client:
             return
 
 
-        # price_block = block.select_one('span.price')
-        # if not price_block:
-        #     logger.error(f'no price on {url}')
-        #     return
-        #
-        # price_name = price_block.select_one('ins.lower-price')
-        # if not price_name:
-        #     logger.error(f'no price_name on {url}')
-        #     return
-        #
-        # price_name = price_name.text.strip()
 
         self.result.append(ParseResult(
             url=url,
             brand_name=brand_name,
+            lover_name=lover_name,
             goods_name=goods_name,
             thumbnail=thumbnail,
-            # price_name=price_name,
+
         ))
 
-        logger.debug('%s, %s, %s, %s', url, brand_name, goods_name, thumbnail,)
+        logger.debug('%s, %s, %s, %s, %s', url, brand_name, lover_name, goods_name, thumbnail)
         logger.debug('-' * 100)
 
     def save_result(self):
-        path = 'C:\python\Parsers\parser_shop\parser\zhtest.csv'
+        path = 'C:\python\Parsers\parser_shop\parser\zzhtest.csv'
         with open(path, 'w') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
             writer.writerow(HEADERS)
