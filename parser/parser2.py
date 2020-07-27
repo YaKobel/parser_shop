@@ -21,10 +21,10 @@ def get_content(html):
     for item in items:
         cards.append(
             {
-                'title':item.find('div', class_='title').get_text(),
-                'link_product': item.find('div', class_='title').find('a').get('href'),
-                'brand': item.find('div', class_='brand').get_text(),
-                'card_img': item.find('div', class_='image').find('img').get('src'),
+                'title':item.find('div', class_='title').get_text(strip=True),
+                'link_product': HOST + item.find('div', class_='title').find('a').get('href'),
+                'brand': item.find('div', class_='brand').get_text(strip=True),
+                'card_img': HOST + item.find('div', class_='image').find('img').get('src'),
 
             }
         )
