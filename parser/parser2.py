@@ -30,7 +30,11 @@ def get_content(html):
         )
     return cards
 
+def parser():
+    html = get_html(URL)
+    if html.status_code == 200:
+        pass
+    else:
+        print('Error')
 
-
-html = get_html(URL)
-print(get_content(html.text))
+parser()
