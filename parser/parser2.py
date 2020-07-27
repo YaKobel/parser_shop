@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
+CSV = 'cards.csv'
 HOST = 'https://minfin.com.ua/'
 URL = 'https://minfin.com.ua/cards/'
 HEADERS = {
@@ -25,10 +26,17 @@ def get_content(html):
                 'link_product': HOST + item.find('div', class_='title').find('a').get('href'),
                 'brand': item.find('div', class_='brand').get_text(strip=True),
                 'card_img': HOST + item.find('div', class_='image').find('img').get('src'),
-
             }
         )
     return cards
+
+def save_doc(items, path):
+    with open(path, 'w', newline='') as file:
+        writer = csv.writer(file, delimiter=';')
+        writer.writerow(['Название продукта', 'Ссылка на продукт', 'Банк', 'Изображение карты'])
+        for item in items:
+            writer.writerow([item['title'], item['link_product'], item['brand'], item['card_img']])
+
 
 def parser():
     PAGENATION = input('Укажите количество страниц для парсинга: ')
@@ -40,6 +48,7 @@ def parser():
             print(f'Парсим страницу: {page}')
             html = get_html(URL, params={'page': page})
             cards.extend(get_content(html.text))
+            save_doc(cards, CSV)
         pass
     else:
         print('Error')
